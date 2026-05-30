@@ -5,10 +5,11 @@ WORKDIR /app
 # Copy your source files
 COPY . .
 
-# Compile ONLY App.java (ignoring AppTest.java) and package it into a runnable JAR file
-RUN javac App.java && \
-    echo "Main-Class: App" > manifest.txt && \
-    jar cvfm app.jar manifest.txt App.class
+# 1. Use -d . to compile and automatically create the package folder structure (e.g., com/example/)
+# 2. Update Main-Class to use the fully qualified class name: com.example.App
+RUN javac -d . App.java && \
+    echo "Main-Class: com.example.App" > manifest.txt && \
+    jar cvfm app.jar manifest.txt com/
 
 # Runtime stage
 FROM eclipse-temurin:17-jre
