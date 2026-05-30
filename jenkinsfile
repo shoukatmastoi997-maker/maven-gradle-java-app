@@ -1,0 +1,25 @@
+pipeline{
+  agen any
+    
+     stages{
+        stage("build"){
+          steps{
+            echo "building step -----"
+          }
+
+        }
+        stage("testing"){
+          steps{
+            echo "testing step -----"
+          }
+
+        }
+        stage("deployment"){
+          steps{
+            echo "Deployment step -----"
+          }
+
+        }
+    }
+
+}
