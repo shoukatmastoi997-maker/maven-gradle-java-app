@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    image: devops-demo:latest
+    # Console app: container will exit after running.
+
