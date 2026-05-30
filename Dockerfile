@@ -1,23 +1,20 @@
 # Build stage
-FROM maven:3.9.9-eclipse-temurin-17 AS build
+FROM gradle:8.12-jdk17 AS build
 WORKDIR /app
 
-# Copy Maven files first for better layer caching
+# Copy the project files
 COPY . .
 
-RUN mvn -q -DskipTests package
+# Grant execution rights and build the JAR (skipping tests for speed)
+RUN chmod +x ./gradlew && ./gradlew build -x test
 
 # Runtime stage
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Copy the built jar
-# For this simple demo we rely on maven's jar output name.
-COPY --from=build /app/target/*.jar /app/app.jar
+# Gradle puts built JARs inside the build/libs directory
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-# Note: This demo app is console-based; it doesn't listen on 8080.
-# We still keep EXPOSE for learning purposes.
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
-
+ENTRYPOINT ["java", "-jar", "app.jar"]
