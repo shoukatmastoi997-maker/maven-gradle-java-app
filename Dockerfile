@@ -5,10 +5,10 @@ WORKDIR /app
 # Copy your source files
 COPY . .
 
-# Compile the Java files and package them into a runnable JAR file
-RUN javac App.java AppTest.java && \
+# Compile ONLY App.java (ignoring AppTest.java) and package it into a runnable JAR file
+RUN javac App.java && \
     echo "Main-Class: App" > manifest.txt && \
-    jar cvfm app.jar manifest.txt App.class AppTest.class
+    jar cvfm app.jar manifest.txt App.class
 
 # Runtime stage
 FROM eclipse-temurin:17-jre
