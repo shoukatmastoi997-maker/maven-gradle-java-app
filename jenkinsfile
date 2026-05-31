@@ -26,7 +26,7 @@ pipeline {
 
         stage('Building docker image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'user', passwordVariable: 'pass')]) {
+                withCredentials([usernamePassword(credentialsId: 'Dockerhub', usernameVariable: 'user', passwordVariable: 'pass')]) {
                     sh 'docker build -t shoukatali175249/jma:jma-1.3 .'
                     sh 'echo $pass | docker login -u $user --password-stdin'
                     sh 'docker push shoukatali175249/jma:jma-1.3'
