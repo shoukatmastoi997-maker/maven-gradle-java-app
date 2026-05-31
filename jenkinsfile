@@ -1,21 +1,61 @@
 pipeline {
     agent any
-    
+
+    tools {
+        maven "maven 3.6.9"
+    }
+
     stages {
-        stage("build") {
+
+        stage('Init') {
             steps {
                 script {
-                    echo "building step ----"
+                    utils = load 'script.groovy'
+                    utils.showBuildInfo()
                 }
             }
         }
-        
-        stage("deploy") {
+
+        stage('building Jar file') {
+            steps {
+               script{
+                sh "mvn package"
+               }
+            }
+        }
+
+        stage('Building docker image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'user', passwordVariable: 'pass')]) {
+                    sh 'docker build -t shoukatali175249/jma:jma-1.3 .'
+                    sh 'echo $pass | docker login -u $user --password-stdin'
+                    sh 'docker push shoukatali175249/jma:jma-1.3'
+                }
+                
+            }
+        }
+
+        stage('Testing') {
+
             steps {
                 script {
-                    echo "deploying Application - - - - "
+                    utils.runTests()
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully"
+        }
+
+        failure {
+            echo "Pipeline failed"
+        }
+
+        always {
+            echo "Cleaning workspace"
         }
     }
 }
