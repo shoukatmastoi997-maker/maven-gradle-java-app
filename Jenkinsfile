@@ -7,55 +7,33 @@ pipeline {
 
     stages {
 
-        stage('Init') {
+        stage('test') {
             steps {
                 script {
-                    utils = load 'script.groovy'
-                    utils.showBuildInfo()
+                echo "Running Tests of bransh $BRANCH_NAME"
+
                 }
             }
         }
-
-        stage('building Jar file') {
-            steps {
-               script{
-                sh "mvn package"
-               }
-            }
-        }
-
-        stage('Building docker image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'Dockerhub', usernameVariable: 'user', passwordVariable: 'pass')]) {
-                    sh 'docker build -t shoukatali175249/jma:jma-1.3 .'
-                    sh 'echo $pass | docker login -u $user --password-stdin'
-                    sh 'docker push shoukatali175249/jma:jma-1.3'
-                }
-                
-            }
-        }
-
-        stage('Testing') {
-
-            steps {
-                script {
-                    utils.runTests()
+        stage('Build') {
+            when{
+                expression{
+                    BRANCH_NAME == 'main'
                 }
             }
+            steps{
+                echo "Building the application"
+            }
         }
-    }
-
-    post {
-        success {
-            echo "Pipeline completed successfully"
-        }
-
-        failure {
-            echo "Pipeline failed"
-        }
-
-        always {
-            echo "Cleaning workspace"
+           stage('deploy') {
+            when{
+                expression{
+                    BRANCH_NAME == 'main'
+                }
+            }
+            steps{
+                echo "Deploying the application"
+            }
         }
     }
 }
