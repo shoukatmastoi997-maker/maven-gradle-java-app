@@ -30,7 +30,7 @@ pipeline {
         stage('deploy') {
             steps {
                 script {
-                    def dockercmd = 'docker run -p 3080:3080 shoukatali175249/jma:jma-1.3'
+                    def dockercmd = 'sudo docker run -p 3080:3080 shoukatali175249/jma:jma-1.3'
                     
                     // Ensure 'ec2' is the correct Credentials ID in your Jenkins store
                     sshagent(['ec2']) {
